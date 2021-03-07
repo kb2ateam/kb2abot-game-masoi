@@ -4,7 +4,7 @@
   "description": "Game Ma Sói cho kb2abot",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "update": "git fetch origin main && git reset --hard origin/main"
   },
   "repository": {
     "type": "git",
