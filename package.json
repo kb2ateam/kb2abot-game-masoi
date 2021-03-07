@@ -1,0 +1,25 @@
+{
+  "name": "kb2abot-games-masoi",
+  "version": "1.0.0",
+  "description": "Game Ma Sói cho kb2abot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kb2ateam/kb2abot-games-masoi.git"
+  },
+  "keywords": [
+    "masoi"
+  ],
+  "author": "khoakomlem",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kb2ateam/kb2abot-games-masoi/issues"
+  },
+  "homepage": "https://github.com/kb2ateam/kb2abot-games-masoi#readme",
+  "devDependencies": {
+    "eslint": "^7.21.0"
+  }
+}
