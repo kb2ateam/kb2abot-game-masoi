@@ -4,7 +4,8 @@
   "description": "Game Ma Sói cho kb2abot",
   "main": "index.js",
   "scripts": {
-    "update": "git fetch origin main && git reset --hard origin/main"
+    "update": "git fetch origin main && git reset --hard origin/main",
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,8 @@
   "homepage": "https://github.com/kb2ateam/kb2abot-games-masoi#readme",
   "devDependencies": {
     "eslint": "^7.21.0"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.4"
   }
 }

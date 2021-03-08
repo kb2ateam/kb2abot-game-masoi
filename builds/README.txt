@@ -1,0 +1,1 @@
+﻿Just folder for storing builds (zipped)

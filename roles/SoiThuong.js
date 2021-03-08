@@ -1,6 +1,5 @@
 const Role = require("./Role");
 const gameConfig = require("../gameConfig");
-const {sendMessage} = kb2abot.helpers.fca;
 
 module.exports = class SoiThuong extends Role {
 	constructor(options) {
@@ -25,17 +24,18 @@ module.exports = class SoiThuong extends Role {
 		);
 		const game = kb2abot.gameManager.find({id: this.gameID});
 		const {name, username} = game.playerManager.items[value-1];
-		await sendMessage(api, `Bạn đã chọn cắn ${name}(${username})!`, this.threadID);
+		await this.sendMessage(api, `Bạn đã chọn cắn ${name}(${username})!`);
 	}
 
 	async onNight(api) {
 		const game = kb2abot.gameManager.find({id: this.gameID});
-		await sendMessage(
+		await game.u_timingSend({
 			api,
-			"[30s] Bạn muốn cắn ai trong đêm nay 💀 (chỉ nhập số)\n" +
-			game.chat_playerList({died: false}),
-			this.threadID
-		);
+			message: "Bạn muốn cắn ai trong đêm nay 💀 (chỉ nhập số)\n" +
+								game.chat_playerList({died: false}),
+			timing: gameConfig.timeout.SOITHUONG,
+			threadID: this.threadID
+		});
 		return [await this.request(gameConfig.code.SOITHUONG, gameConfig.timeout.SOITHUONG)];
 	}
 };

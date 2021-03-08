@@ -33,7 +33,7 @@ module.exports = class Role {
 				this.commit(message.body);
 			}
 			catch(e) {
-				api.sendMessage(e.message, this.threadID);
+				await this.sendMessage(api, e.message);
 			}
 		}
 	}
@@ -70,13 +70,18 @@ module.exports = class Role {
 
 	async voteKill(api) {
 		const game = kb2abot.gameManager.find({id: this.gameID});
-		await sendMessage(
+		await game.u_timingSend({
 			api,
-			"[30s] Vui lòng chọn 1 trong mấy người chơi dưới đây để vote treo cổ\n" +
-			game.chat_playerList({died: false}),
-			this.threadID
-		);
+			message: "Vui lòng chọn 1 trong mấy người chơi dưới đây để vote treo cổ\n" +
+								game.chat_playerList({died: false}),
+			timing: gameConfig.timeout.VOTEKILL,
+			threadID: this.threadID
+		});
 		return await this.request(gameConfig.code.VOTEKILL, gameConfig.timeout.VOTEKILL);
+	}
+
+	async sendMessage(api, message) {
+		await sendMessage(api, message, this.threadID);
 	}
 
 	commit(value) {
@@ -109,7 +114,7 @@ module.exports = class Role {
 			);
 			const game = kb2abot.gameManager.find({id: this.gameID});
 			const {name, username} = game.playerManager.items[value-1];
-			await sendMessage(api, `Bạn đã vote ${name}(${username})!`, this.threadID);
+			await this.sendMessage(api, `Bạn đã vote ${name}(${username})!`);
 		}
 	}
 
@@ -154,9 +159,5 @@ module.exports = class Role {
 
 	async die(api) {
 		this.died = true;
-	}
-
-	isAlive() {
-		return !this.died;
 	}
 };

@@ -51,9 +51,9 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 		if (message.body.toLowerCase() == "end!") {
 			if (message.senderID == this.masterID) {
 				await kb2abot.gameManager.clean(this.threadID);
-				await sendMessage(api, "Đã dọn dẹp trò chơi", this.threadID);
+				await this.sendMessage(api, "Đã dọn dẹp trò chơi");
 			}	else {
-				await sendMessage(api, "Chỉ có chủ tạo game mới có thể end!", this.threadID);
+				await this.sendMessage(api, "Chỉ có chủ tạo game mới có thể end!");
 			}
 		}
 
@@ -96,8 +96,8 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 					 `Lời khuyên: ${roleData.advice}`;
 	}
 
-	async chat_sendStatus(api) {
-		await sendMessage(api, `Tình trạng:\n${this.chat_playerList()}`, this.threadID);
+	async chat_sendStatus(api, threadID = this.threadID) {
+		await sendMessage(api, `Tình trạng:\n${this.chat_playerList()}`, threadID);
 	}
 	// <-- chat utilities
 
@@ -106,7 +106,7 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 	//  --> state function
 	async state_settingUp(api, message) {
 		if (message.body.toLowerCase() == "meplay" && this.participants.length < this.amount && this.u_addParticipant(message.senderID)) {
-			await sendMessage(api, `${this.participants.length}/${this.amount}`, this.threadID);
+			await this.sendMessage(api, `${this.participants.length}/${this.amount}`);
 			if (this.participants.length == this.amount) {
 				const infos = await kb2abot.helpers.fca.getUserInfo(api, this.participants);
 				shuffle(this.setup);
@@ -135,22 +135,31 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 				for (const role of this.setup) {
 					balanceScore += gameConfig.data[role].score;
 				}
-				await sendMessage(api, "Điểm cân bằng: " + balanceScore, this.threadID);
-				await sendMessage(api, "Thứ tự gọi: " + gameConfig.arrange.filter(r => this.setup.includes(r)).join(" > "), this.threadID);
-				await sendMessage(api, "Trò chơi bắt đầu sau 1 giây", this.threadID);
-				await sendMessage(api, "Nhắn \"help\" để xem role của mình!", this.threadID);
+				await this.sendMessage(api, "Điểm cân bằng: " + balanceScore);
+				await this.sendMessage(api, "Thứ tự gọi: " + gameConfig.arrange.filter(r => this.setup.includes(r)).join(" 👉 "));
+				await this.u_timingSend({
+					api,
+					message: "Trò chơi bắt đầu sau",
+					timing: gameConfig.timeout.DELAY_STARTGAME,
+					left: false
+				});
+				await this.sendMessage(api, "Danh sách lệnh (nhắn vô group này hoặc vô bot): \n1.\"help\": xem role của mình!\n2.\"status\": Tình trạng các người chơi");
+				await asyncWait(gameConfig.timeout.DELAY_STARTGAME);
 				this.start(api, message);
 				this.state.next();
 			}
 		}
 	}
 
-	state_done(api, message) {
+	async state_done(api, message) {
 		if (message.body != "end!") {
 			const player = this.playerManager.find({threadID: message.senderID});
 			switch(message.body) {
 			case "help":
-				api.sendMessage(this.chat_des(player.type), message.senderID);
+				await sendMessage(api, this.chat_des(player.type), message.senderID);
+				break;
+			case "status":
+				await this.chat_sendStatus(api, message.threadID);
 				break;
 			}
 			if (!message.isGroup)
@@ -172,16 +181,18 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 				task.next();
 			}
 		}
-		await sendMessage(api, "Trò chơi kết thúc!", this.threadID);
-		await sendMessage(api, `Phe /${this.u_getWinner(true)}/ đã giành chiến thắng!!`, this.threadID);
-		await sendMessage(api, "Như chúng ta đã biết, vai trò của từng người là: . . .", this.threadID);
+		await this.sendMessage(api, "Trò chơi kết thúc!");
+		await this.sendMessage(api, `Phe /${this.u_getWinner(true)}/ đã giành chiến thắng!!`);
+		await this.sendMessage(api, "Như chúng ta đã biết, vai trò của từng người là: . . .");
+		let message = "";
 		for (const player of this.playerManager.items) {
 			const {name, username, type} = player;
-			await sendMessage(api, `${name}(${username}) - ${type}`, this.threadID);
-			await asyncWait(1000);
+			message += `${name}(${username}) - ${type}\n`;
 		}
+		await asyncWait(2000);
+		await this.sendMessage(api, message);
 		await kb2abot.gameManager.clean(this.threadID);
-		await sendMessage(api, "Đã dọn dẹp trò chơi!", this.threadID);
+		await this.sendMessage(api, "Đã dọn dẹp trò chơi!");
 	}
 
 	async onNight(api) {
@@ -257,7 +268,7 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 				await player.onNightEnd(api, commit.code, commit.value);
 			}
 		}
-		await sendMessage(api, "Trời đã sáng!!", this.threadID);
+		await this.sendMessage(api, "Trời đã sáng!!");
 
 		let deadAmount = 0;
 
@@ -265,9 +276,9 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 			deadAmount++;
 			const player = this.playerManager.items[iPlayerKilledByWolf];
 			const {name, username} = player;
-			await sendMessage(api, `Người chơi ${name}(${username}) đã ${lmao[random(0, lmao.length-1)]} 💀`, this.threadID);
+			await this.sendMessage(api, `Người chơi ${name}(${username}) đã ${lmao[random(0, lmao.length-1)]} 💀`);
 			await asyncWait(2000);
-			await sendMessage(api, "*trên thi thể có rất nhiều vết cắn!", this.threadID);
+			await this.sendMessage(api, "*trên thi thể có rất nhiều vết cắn!");
 			await asyncWait(2000);
 			await player.die(api, "SoiThuong");
 		}
@@ -276,28 +287,34 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 			deadAmount++;
 			const player = this.playerManager.items[iPlayerKilledByWitch];
 			const {name, username} = player;
-			await sendMessage(
+			await this.sendMessage(
 				api,
-				`${(deadAmount>1?"PHÁT HIỆN THÊM n":"N")}gười chơi ${name}(${username}) đã ${lmao[random(0, lmao.length-1)]} 💀`,
-				this.threadID
+				`${(deadAmount>1?"PHÁT HIỆN THÊM n":"N")}gười chơi ${name}(${username}) đã ${lmao[random(0, lmao.length-1)]} 💀`
 			);
 			await asyncWait(2000);
 			await player.die(api, "PhuThuy");
 		}
 
 		if (deadAmount > 0) {
-			await sendMessage(api, `Vậy là đêm qua đã có ${gameConfig.symbols[deadAmount]} người chết!`, this.threadID);
+			await this.sendMessage(api, `Vậy là đêm qua đã có ${gameConfig.symbols[deadAmount]} người chết!`);
 			await this.chat_sendStatus(api);
 		} else {
-			await sendMessage(api, "Một đêm bình yên và không có chết chóc!", this.threadID);
-			// await sendMessage(api, "Tuy là vậy nhưng chừng nào còn lũ sói, thì sẽ không có tự do!");
+			await this.sendMessage(api, "Một đêm bình yên và không có chết chóc!");
 		}
 	}
 
 	async onVote(api) {
-		await sendMessage(api, "30 giây bàn luận bắt đầu!", this.threadID);
+		await this.u_timingSend({
+			api,
+			message: "Giây phút bình loạn bắt đầu!!",
+			timing: gameConfig.timeout.DISCUSS
+		});
 		await asyncWait(gameConfig.timeout.DISCUSS);
-		await sendMessage(api, "Các bạn có 30s để vote treo cổ", this.threadID);
+		await this.u_timingSend({
+			api,
+			message: "Đã hết giờ bình loạn, các bạn muốn treo cổ ai?",
+			timing: gameConfig.timeout.VOTEKILL
+		});
 
 		const groupPromises = [];
 		for (const player of this.playerManager.items) {
@@ -317,22 +334,22 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 
 		const sorted = [...dd].sort((a,b) => b-a);
 		if (sorted[0] == sorted[1]) {
-			await sendMessage(api, "Sẽ không có ai bị treo cổ trong hôm nay (huề)", this.threadID);
+			await this.sendMessage(api, "Sẽ không có ai bị treo cổ trong hôm nay (huề)");
 		} else {
 			const percent = max / this.playerManager.getLength() * 100;
 			const player = this.playerManager.items[hangedIndex];
 			const {name, username} = player;
 			if (percent > 50) {
-				await sendMessage(api, `Treo cổ ${name}(${username}) ...`, this.threadID);
+				await this.sendMessage(api, `Treo cổ ${name}(${username}) ...`);
 				await asyncWait(2000);
 				await player.die(api);
-				await sendMessage(api, `${name}(${username}) đã ${lmao[random(0, lmao.length-1)]} 💀`, this.threadID);
+				await this.sendMessage(api, `${name}(${username}) đã ${lmao[random(0, lmao.length-1)]} 💀`);
 				await asyncWait(1000);
 				await this.chat_sendStatus(api);
 			} else {
 				const moment = dd[hangedIndex+1];
-				const need = Math.round(votes.length/2) - moment;
-				await sendMessage(api, `Không đủ số lượng vote cho ${name}(${username}) (hiện tại: ${moment}, cần thêm: ${need} phiếu!)`, this.threadID);
+				const need = Math.ceil(votes.length/2) - moment;
+				await this.sendMessage(api, `Không đủ số lượng vote cho ${name}(${username}) (hiện tại: ${moment}, cần thêm: ${need} phiếu!)`);
 			}
 
 		}
@@ -342,6 +359,38 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 	// ---------------------------------------------------------------------------
 
 	// --> game utilities
+
+	async sendMessage(api, message) {
+		await sendMessage(api, message, this.threadID);
+	}
+
+	async u_timingSend({
+		api,
+		message = "",
+		timing = 0,
+		threadID = this.threadID,
+		left = true
+	} = {}) {
+		if (timing < 0)
+			timing = 0;
+		const hh = Math.floor(timing / 1000 / 60 / 60);
+		const mm = Math.floor((timing - hh * 60 * 60 * 1000) / 1000 / 60);
+		const ss = Math.ceil((timing - hh * 60 * 60 * 1000 - mm * 60 * 1000) / 1000);
+		let text = `${ss}s`;
+		if (mm > 0)
+			text = `${mm}m ${text}`;
+		if (hh > 0)
+			text = `${hh}h ${text}`;
+		if (left)
+			await sendMessage(api, `[${text}] ${message}`, threadID);
+		else
+			await sendMessage(api, `${message} [${text}]`, threadID);
+		return {
+			hh,
+			mm,
+			ss
+		};
+	}
 
 	u_getIPlayerKilledByWolf(movements) {
 		let iPlayerKilledByWolf = -1;

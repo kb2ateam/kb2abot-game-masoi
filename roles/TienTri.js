@@ -1,6 +1,5 @@
 const Role = require("./Role");
 const gameConfig = require("../gameConfig");
-const {sendMessage} = kb2abot.helpers.fca;
 
 module.exports = class TienTri extends Role {
 	constructor(options) {
@@ -24,7 +23,7 @@ module.exports = class TienTri extends Role {
 		);
 		const game = kb2abot.gameManager.find({id: this.gameID});
 		const {name, username} = game.playerManager.items[value-1];
-		await sendMessage(api, `Bạn đã chọn xem role của người chơi ${name}(${username})!`, this.threadID);
+		await this.sendMessage(api, `Bạn đã chọn xem role của người chơi ${name}(${username})!`);
 	}
 
 	async onNightEnd(api, code, value) {
@@ -33,17 +32,18 @@ module.exports = class TienTri extends Role {
 		const game = kb2abot.gameManager.find({id: this.gameID});
 		const {name, username, type} = game.playerManager.items[value-1];
 		const party = gameConfig.data[type].party > 0 ? "Dân Làng" : "Sói";
-		await sendMessage(api, `Phe của ${name}(${username}) là /${party}/`, this.threadID);
+		await this.sendMessage(api, `Phe của ${name}(${username}) là /${party}/`);
 	}
 
 	async onNight(api) {
 		const game = kb2abot.gameManager.find({id: this.gameID});
-		await sendMessage(
+		await game.u_timingSend({
 			api,
-			"[30s] Đêm nay bạn muốn soi ai? (cấm soi gái và chỉ nhập số)\n" +
+			message: "Đêm nay bạn muốn soi ai? (cấm soi gái và chỉ nhập số)\n" +
 			game.chat_playerList(),
-			this.threadID
-		);
+			timing: gameConfig.timeout.TIENTRI,
+			threadID: this.threadID
+		});
 		return [await this.request(gameConfig.code.TIENTRI, gameConfig.timeout.TIENTRI)];
 	}
 };

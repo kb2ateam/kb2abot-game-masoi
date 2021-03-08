@@ -1,6 +1,7 @@
 module.exports = {
 
 	timeout: {
+		DELAY_STARTGAME: 1000,
 		DISCUSS: 30000,
 		VOTEKILL: 30000,
 		BAOVE: 30000,

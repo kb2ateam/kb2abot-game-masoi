@@ -1,6 +1,5 @@
 const Role = require("./Role");
 const gameConfig = require("../gameConfig");
-const {sendMessage} = kb2abot.helpers.fca;
 
 module.exports = class PhuThuy extends Role {
 	constructor(options) {
@@ -32,7 +31,7 @@ module.exports = class PhuThuy extends Role {
 			} else
 				throw new Error("Bạn đã sử dụng bình [cứu người] rồi!");
 			const {name, username} = game.playerManager.items[this.iPlayerKilledByWolf];
-			await sendMessage(api, `Bạn đã chọn ${value == 1?"CỨU SỐNG": "KHÔNG CỨU"} ${name}(${username})!`, this.threadID);
+			await this.sendMessage(api, `Bạn đã chọn ${value == 1?"CỨU SỐNG": "KHÔNG CỨU"} ${name}(${username})!`);
 			break;
 		}
 
@@ -46,7 +45,7 @@ module.exports = class PhuThuy extends Role {
 				this.isNotSelf
 			);
 			const {name, username} = game.playerManager.items[value-1];
-			await sendMessage(api, `Bạn đã chọn giết ${name}(${username})!`, this.threadID);
+			await this.sendMessage(api, `Bạn đã chọn giết ${name}(${username})!`);
 			break;
 		}
 
@@ -80,31 +79,32 @@ module.exports = class PhuThuy extends Role {
 
 				if (iPlayerKilledByWolf != -1) { // not tie
 					const {name, username} = game.playerManager.items[iPlayerKilledByWolf];
-					await sendMessage(
+					await game.u_timingSend({
 						api,
-						`[30s] Đêm nay ${name}(${username}) sẽ bị lũ sói cắn, bạn có muốn sử dụng bình [cứu người] không? (1 lần duy nhất)\n` +
-						`${gameConfig.symbols[1]} Có ♥\n` +
-						`${gameConfig.symbols[2]} Không 😈`,
-						this.threadID
-					);
+						message: `Đêm nay ${name}(${username}) sẽ bị lũ sói cắn, bạn có muốn sử dụng bình [cứu người] không? (1 lần duy nhất)\n` +
+											`${gameConfig.symbols[1]} Có ♥\n` +
+											`${gameConfig.symbols[2]} Không 😈`,
+						timing: gameConfig.timeout.PHUTHUY_CUU,
+						threadID: this.threadID
+					});
 					requests.push(await this.request(gameConfig.code.PHUTHUY_CUU, gameConfig.timeout.PHUTHUY_CUU));
 				}
 			} else {
-				await sendMessage(
+				await this.sendMessage(
 					api,
-					"Đêm nay không có ai bị cắn!",
-					this.threadID
+					"Đêm nay không có ai bị cắn!"
 				);
 			}
 		}
 
 		if (this.potion.kill) {
-			await sendMessage(
+			await game.u_timingSend({
 				api,
-				`[30s] Bạn có muốn sử dụng ${requests.length>0?"thêm ":""}bình [giết người] để giết ai không? (1 lần duy nhất)\n` +
-				game.chat_playerList({died: false}),
-				this.threadID
-			);
+				message: `Bạn có muốn sử dụng ${requests.length>0?"thêm ":""}bình [giết người] để giết ai không? (1 lần duy nhất)\n` +
+									game.chat_playerList({died: false}),
+				timing: gameConfig.timeout.PHUTHUY_GIET,
+				threadID: this.threadID
+			});
 			requests.push(await this.request(gameConfig.code.PHUTHUY_GIET, gameConfig.timeout.PHUTHUY_GIET));
 		}
 
