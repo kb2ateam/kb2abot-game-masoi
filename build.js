@@ -5,4 +5,4 @@ zip.addLocalFile("./index.js", "masoi");
 zip.addLocalFile("./gameConfig.js", "masoi");
 zip.addLocalFolder("./roles", "masoi/roles");
 // or write everything to disk
-zip.writeZip(`./builds/masoi ${version}.zip`);
+zip.writeZip(`./builds/masoi${version}.zip`);
