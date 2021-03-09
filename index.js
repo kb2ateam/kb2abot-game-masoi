@@ -148,6 +148,8 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 				this.start(api, message);
 				this.state.next();
 			}
+		} else {
+			await this.sendMessage(api, "Nhắn \"meplay\" để vào game (chủ game không cần nhắn)\n Nếu muốn end game ngay lập tức thì nhắn \"end!\"");
 		}
 	}
 
