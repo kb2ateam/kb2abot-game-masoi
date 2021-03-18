@@ -1,5 +1,5 @@
 const timeout = { // timeout cho từng event
-	DELAY_STARTGAME: 1000,
+	DELAY_STARTGAME: 5000,
 	DISCUSS: 30000,
 	VOTEKILL: 30000,
 	BAOVE: 30000,
@@ -12,10 +12,7 @@ const timeout = { // timeout cho từng event
 };
 
 const setup = { //  Setup theo số lượng người chơi
-	0: null, // Từ 0=3 không chơi được
-	1: null,
-	2: ["BaoVe", "SoiThuong"],
-	3: ["BaoVe", "SoiThuong", "SoiThuong"],
+	3: ["BaoVe", "ThoSan", "SoiThuong"],
 	4: ["BaoVe", "PhuThuy", "SoiThuong", "ThoSan"],
 	5: ["BaoVe", "PhuThuy", "SoiThuong", "ThoSan", "TienTri"],
 	6: ["BaoVe", "PhuThuy", "SoiThuong", "ThoSan", "TienTri", "SoiThuong"],
@@ -112,7 +109,6 @@ for (let i = 10; i<= 1000; i++) {
 		number = Math.floor(number / 10);
 	}
 }
-console.log(symbols[123]);
 
 module.exports = {
 	timeout,

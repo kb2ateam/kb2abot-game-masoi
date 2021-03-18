@@ -1,11 +1,14 @@
 const fs = require("fs");
 const path = require("path");
+const deepExtend = require("deep-extend");
+let gameConfig;
 const cfgPath = path.join(__dirname, "gameConfig.js");
 const cfgExPath = path.join(__dirname, "gameConfig.example.js");
 if (!fs.existsSync(cfgPath)) {
 	fs.writeFileSync(cfgPath, fs.readFileSync(cfgExPath));
+} else {
+	gameConfig = deepExtend(require(cfgExPath), require(cfgPath));
 }
-let gameConfig = require("./gameConfig");
 const roles = loader.load(path.join(__dirname, "roles"));
 const {sendMessage} = kb2abot.helpers.fca;
 const {asyncWait, random, shuffle} = kb2abot.helpers;
@@ -103,7 +106,7 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 	}
 
 	async chat_sendStatus(api, threadID = this.threadID) {
-		await sendMessage(api, `Tình trạng:\n${this.chat_playerList()}`, threadID);
+		await sendMessage(api, `Các người chơi còn sống:\n${this.chat_playerList({died: false})}`, threadID);
 	}
 	// <-- chat utilities
 
@@ -120,8 +123,8 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 					const participantID = this.participants[i];
 					const info = infos[participantID];
 					this.playerManager.add(new roles[this.setup[i]]({
-						name: info.name || "(chưa kb)",
-						username: kb2abot.helpers.fca.getUsername(info.profileUrl) || "(chưa kb)",
+						name: info.name || "<chưa add fr>",
+						username: kb2abot.helpers.fca.getUsername(info.profileUrl) || "<chưa add fr>",
 						threadID: participantID,
 						gameID: this.id
 					}));
@@ -149,23 +152,23 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 					timing: gameConfig.timeout.DELAY_STARTGAME,
 					left: false
 				});
-				await this.sendMessage(api, "Danh sách lệnh (nhắn vô group này hoặc vô bot): \n1.\"help\": xem role của mình!\n2.\"status\": Tình trạng các người chơi");
+				await this.sendMessage(api, "Danh sách lệnh (không cần prefix): ===GROUP===\n1.\"help\": Xem role của mình!\n2.\"status\": Tình trạng các người chơi còn sống\n===PRIVATE===\n1.\"pass\": Bỏ qua lượt");
 				await asyncWait(gameConfig.timeout.DELAY_STARTGAME);
 				this.start(api, message);
 				this.state.next();
 			}
 		}
 		if (!this.sentInstruction) {
-			await this.sendMessage(api, "Nhắn \"meplay\" để vào game (chủ game không cần nhắn)\n Nếu muốn end game ngay lập tức thì nhắn \"end!\"");
-			await this.sendMessage(api, "số người sẵn sàng: 1/"+this.amount);
+			await this.sendMessage(api, "Nhắn \"meplay\" để vào game \n Nếu muốn kết thúc game thì nhắn \"end!\"");
+			await this.sendMessage(api, "Số người sẵn sàng: 1/"+this.amount);
 			this.sentInstruction = true;
 		}
 	}
 
 	async state_done(api, message) {
-		if (message.body != "end!") {
+		if (message.body.toLowerCase() != "end!") {
 			const player = this.playerManager.find({threadID: message.senderID});
-			switch(message.body) {
+			switch(message.body.toLowerCase()) {
 			case "help":
 				await sendMessage(api, this.chat_des(player.type), message.senderID);
 				break;
@@ -342,23 +345,28 @@ module.exports = class MasoiGame extends kb2abot.schemas.Game {
 			if (index != -1) {
 				voteChart[index].amount++;
 			} else {
+				if (!commit.value) continue;
 				voteChart.push({
 					index: commit.value - 1,
 					amount: 1
 				});
 			}
 		}
-		voteChart.sort((a, b) => b-a);
+		if (voteChart.length == 0) {
+			await this.sendMessage(api, "Sẽ không có ai bị treo cổ trong hôm nay!");
+			return;
+		}
+		voteChart.sort((a, b) => b.amount-a.amount);
 
 		let voteResult = "Kết quả vote: \n";
 		for (let i = 0; i < voteChart.length; i++) {
-			const result = voteChart[i];
-			const {name, username} = this.playerManager.items[result.index];
-			voteResult += `${gameConfig.symbols[i+1]} ${name}(${username}): ${result.amount}${i==0 && voteChart[1].amount<result.amount?"💔💦":""}\n`;
+			const vote = voteChart[i];
+			const {name, username} = this.playerManager.items[vote.index];
+			voteResult += `${gameConfig.symbols[i+1]} ${name}(${username}):  ${vote.amount}${i==0 && (voteChart.length==1||voteChart[1].amount<vote.amount)?"💔💦":""}\n`;
 		}
 		await this.sendMessage(api, voteResult);
 
-		if (voteChart[0].amount == voteChart[1].amount) {
+		if (voteChart.length > 1 && voteChart[0].amount == voteChart[1].amount) {
 			await this.sendMessage(api, "Sẽ không có ai bị treo cổ trong hôm nay (huề)");
 		} else {
 			const {index: hangedIndex, amount} = voteChart[0];

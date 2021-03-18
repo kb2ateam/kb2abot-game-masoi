@@ -27,7 +27,13 @@ module.exports = class Role {
 	}
 
 	async onMessage(api, message) {
-		if (this.state.is("waitresponse")) {
+		if (!this.state.is("waitresponse")) return;
+		switch (message.body.toLowerCase()) {
+		case "pass":
+			this.commit(null);
+			await this.sendMessage(api, "Bạn đã bỏ lượt!");
+			break;
+		default:
 			try {
 				await this.commitChecker(api, this.code, message.body);
 				this.commit(message.body);
@@ -35,34 +41,32 @@ module.exports = class Role {
 			catch(e) {
 				await this.sendMessage(api, e.message);
 			}
+			break;
 		}
 	}
 
 	request(code, timeout = 30000) {
 		return new Promise(resolve => {
+			if (!this.state.is("idle")) return;
 			this.code = code;
-			if (this.state.is("idle")) {
-				this.state.next();
-			}
+			this.state.next();
 
 			let _interval, _timeout;
 
 			_interval = setInterval(() => {
-				if (this.committedValue || this.state.is("resolved")) {
+				if (this.state.is("resolved")) {
 					clearInterval(_interval);
 					clearTimeout(_timeout);
 					const commit = this.getCommit();
-					this.resetRequest();
-					resolve(commit);
+					this.state.reset();
+					this.committedValue = null;
+					this.code = null;
+					resolve(commit); // resolve phai de o cuoi cung
 				}
 			}, 1000);
 			_timeout = setTimeout(() => {
 				if (this.state.is("waitresponse")) {
-					clearInterval(_interval);
 					this.commit(null);
-					const commit = this.getCommit();
-					this.resetRequest();
-					resolve(commit);
 				}
 			}, timeout);
 		});
@@ -94,12 +98,6 @@ module.exports = class Role {
 			code: this.code,
 			value: this.committedValue
 		};
-	}
-
-	resetRequest() {
-		this.state.reset();
-		this.committedValue = null;
-		this.code = null;
 	}
 
 	// --> commit checker

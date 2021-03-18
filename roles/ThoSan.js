@@ -17,7 +17,13 @@ module.exports = class ThoSan extends Role {
 		await super.commitChecker(api, code, value);
 		if (code == gameConfig.code.VOTEKILL) return;
 
-		this.testCommit(value, this.isAlive);
+		this.testCommit(
+			value,
+			this.isNumber,
+			this.isValidPlayerIndex,
+			this.isAlive,
+			this.isNotSelf
+		);
 		const game = kb2abot.gameManager.find({id: this.gameID});
 		const {name, username} = game.playerManager.items[value-1];
 		switch(code) {
@@ -38,6 +44,7 @@ module.exports = class ThoSan extends Role {
 	}
 
 	async onNight(api) {
+		if (this.pinnedIndex != -1) return [];
 		const game = kb2abot.gameManager.find({id: this.gameID});
 		await game.u_timingSend({
 			api,
@@ -62,6 +69,7 @@ module.exports = class ThoSan extends Role {
 				threadID: this.threadID
 			});
 			const commit = await this.request(gameConfig.code.THOSAN_TREOCO, gameConfig.timeout.THOSAN_TREOCO);
+			if (!commit.value) return;
 			const deadPlayer = game.playerManager.items[commit.value-1];
 			await game.sendMessage(api, "*BẰNG*");
 			await deadPlayer.sendMessage(api, "Bạn đã bị trúng đạn :/ \n*die");
@@ -72,14 +80,19 @@ module.exports = class ThoSan extends Role {
 			);
 			await deadPlayer.die(api);
 		} else {
-			const deadPlayer = game.playerManager.items[this.pinnedIndex];
-			await game.sendMessage(api, "*PẰNG*");
-			await deadPlayer.sendMessage(api, "Bạn đã bị trúng đạn :/ \n*die");
-			await game.sendMessage(
-				api,
-				`Người chơi ${deadPlayer.name}(${deadPlayer.username}) xấu số đã bị bắn bởi ${this.name}(${this.username})!`
-			);
-			await deadPlayer.die(api);
+			if (this.pinnedIndex != -1) {
+				this.testCommit(this.pinnedIndex, this.isValidPlayerIndex, this.isAlive);
+				const deadPlayer = game.playerManager.items[this.pinnedIndex];
+				await game.sendMessage(api, "*PẰNG*");
+				await deadPlayer.sendMessage(api, "Bạn đã bị trúng đạn :/ \n*die");
+				await game.sendMessage(
+					api,
+					`Người chơi ${deadPlayer.name}(${deadPlayer.username}) xấu số đã bị bắn bởi ${this.name}(${this.username})!`
+				);
+				await deadPlayer.die(api);
+			} else {
+				await this.sendMessage(api, "Đêm trước bạn đã bỏ lượt nên không thể bắn ai trước khi chết!");
+			}
 		}
 	}
 };
