@@ -81,7 +81,12 @@ module.exports = class ThoSan extends Role {
 			await deadPlayer.die(api);
 		} else {
 			if (this.pinnedIndex != -1) {
-				this.testCommit(this.pinnedIndex, this.isValidPlayerIndex, this.isAlive);
+				try {
+					this.testCommit(this.pinnedIndex, this.isAlive);
+				}
+				catch {
+					return;
+				}
 				const deadPlayer = game.playerManager.items[this.pinnedIndex];
 				await game.sendMessage(api, "*PẰNG*");
 				await deadPlayer.sendMessage(api, "Bạn đã bị trúng đạn :/ \n*die");
