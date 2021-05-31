@@ -1,49 +1,45 @@
-const Role = require("./Role");
-const gameConfig = require("../gameConfig");
+const Role = require('./Role');
+const gameConfig = require('../gameConfig');
 
 module.exports = class TienTri extends Role {
 	constructor(options) {
 		super({
 			...{
-				type: "TienTri"
+				type: 'TienTri'
 			},
 			...options
 		});
 	}
 
-	async commitChecker(api, code, value) {
-		await super.commitChecker(api, code, value);
-		if (code == gameConfig.code.VOTEKILL) return;
+	commitChecker(code, value) {
+		if (code == gameConfig.code.VOTEKILL)
+			return super.commitChecker(code, value);
 
-		this.testCommit(
-			value,
-			this.isNumber,
-			this.isValidPlayerIndex,
-			this.isNotSelf
+		this.testCommit(value, this.isNotSelf);
+		const {name, username} = this.game.playerManager.items[value - 1];
+		this.sendMessage(
+			`Bạn đã chọn xem role của người chơi ${name}(${username})!`
 		);
-		const game = kb2abot.gameManager.find({id: this.gameID});
-		const {name, username} = game.playerManager.items[value-1];
-		await this.sendMessage(api, `Bạn đã chọn xem role của người chơi ${name}(${username})!`);
 	}
 
-	async onNightEnd(api, code, value) {
+	async onNightEnd(code, value) {
 		if (!value) return;
-		await super.onNightEnd(api, code, value);
-		const game = kb2abot.gameManager.find({id: this.gameID});
-		const {name, username, type} = game.playerManager.items[value-1];
-		const party = gameConfig.data[type].party > 0 ? "Dân Làng" : "Sói";
-		await this.sendMessage(api, `Phe của ${name}(${username}) là /${party}/`);
+		await super.onNightEnd(code, value);
+
+		const {name, username, type} = this.game.playerManager.items[value - 1];
+		const party = gameConfig.data[type].party > 0 ? 'Dân Làng' : 'Sói';
+		await this.sendMessage(`Phe của ${name}(${username}) là /${party}/`);
 	}
 
-	async onNight(api) {
-		const game = kb2abot.gameManager.find({id: this.gameID});
-		await game.u_timingSend({
-			api,
-			message: "Đêm nay bạn muốn soi ai? (cấm soi gái và chỉ nhập số)\n" +
-			game.chat_playerList(),
-			timing: gameConfig.timeout.TIENTRI,
-			threadID: this.threadID
+	async onNight() {
+		await this.timingSend({
+			message:
+				'Đêm nay bạn muốn soi ai? (cấm soi gái và chỉ nhập số)\n' +
+				this.game.chat_playerList(),
+			timing: gameConfig.timeout.TIENTRI
 		});
-		return [await this.request(gameConfig.code.TIENTRI, gameConfig.timeout.TIENTRI)];
+		return [
+			await this.request(gameConfig.code.TIENTRI, gameConfig.timeout.TIENTRI)
+		];
 	}
 };
