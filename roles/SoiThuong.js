@@ -1,5 +1,6 @@
 const Role = require('./Role');
 const gameConfig = require('../gameConfig');
+const {asyncWait, random, shuffle} = kb2abot.helpers;
 
 module.exports = class SoiThuong extends Role {
 	constructor(options) {
@@ -17,13 +18,14 @@ module.exports = class SoiThuong extends Role {
 
 		this.testCommit(value, this.isAlive, this.isNotSelf);
 		const {name, username} = this.game.playerManager.items[value - 1];
-		this.sendMessage(`Bạn đã chọn cắn ${name}(${username})!`);
+		// this.sendMessage(`💀 Đã chọn cắn ${name}!`);
 	}
 
 	async onNight() {
+		await asyncWait(1000);
 		await this.timingSend({
 			message:
-				'Bạn muốn cắn ai trong đêm nay 💀 (chỉ nhập số)\n' +
+				'🐺 Đêm nay cắn ai ? 💀💀\n' +
 				this.game.chat_playerList({died: false}),
 			timing: gameConfig.timeout.SOITHUONG
 		});

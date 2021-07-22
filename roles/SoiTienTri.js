@@ -1,5 +1,6 @@
 const Role = require('./Role');
 const gameConfig = require('../gameConfig');
+const {asyncWait, random, shuffle} = kb2abot.helpers;
 
 module.exports = class SoiTienTri extends Role {
 	constructor(options) {
@@ -19,18 +20,18 @@ module.exports = class SoiTienTri extends Role {
 		case gameConfig.code.SOITIENTRI_RESIGN:
 			this.testCommit(value, ['1', '2']);
 			if (value == 1)
-				this.sendMessage('Bạn sẽ biến về Sói Thường sau đêm nay');
+				this.sendMessage('🐺 Sẽ biến về Sói Thường sau đêm nay');
 			break;
 		case gameConfig.code.SOITIENTRI_SEER: {
 			this.testCommit(value, this.isNotSelf);
 			const {name, username} = this.game.playerManager.items[value - 1];
-			this.sendMessage(`Bạn đã chọn xem role của ${name}(${username})!`);
+			//this.sendMessage(`Bạn đã chọn xem role của ${name}(${username})!`);
 			break;
 		}
 		case gameConfig.code.SOITIENTRI_VOTE: {
 			this.testCommit(value, this.isAlive, this.isNotSelf);
 			const {name, username} = this.game.playerManager.items[value - 1];
-			this.sendMessage(`Bạn đã chọn cắn ${name}(${username})!`);
+			//this.sendMessage(`Bạn đã chọn cắn ${name}(${username})!`);
 			break;
 		}
 		}
@@ -47,7 +48,7 @@ module.exports = class SoiTienTri extends Role {
 		case gameConfig.code.SOITIENTRI_SEER: {
 			const {name, username, type} = this.game.playerManager.items[value - 1];
 			const party = gameConfig.data[type].party > 0 ? 'Dân Làng' : 'Sói';
-			await this.sendMessage(`Phe của ${name}(${username}) là /${party}/`);
+			await this.sendMessage(`🔮 Role của ${name} là ${type}`);
 			break;
 		}
 		}
@@ -58,22 +59,24 @@ module.exports = class SoiTienTri extends Role {
 
 		let alone = true;
 		for (const player of this.game.playerManager.items) {
-			if (gameConfig.data[player.type].party == -1 && player != this) {
+			if (gameConfig.data[player.type].party == -1 && player != this && !player.died) {
 				alone = false;
 				break;
 			}
 		}
-		if (alone) {
+		if ((alone) && this.type == 'SoiTienTri') {
 			this.type = 'SoiThuong';
+			await asyncWait(1000);
 			await this.sendMessage(
-				'Vì trong phe của bạn không còn ai nên bạn đã trở thành Sói Thường!'
+				'🐺 Chỉ còn bạn trong phe Sói nên đã trở thành Sói Thường!\n⚠️LƯU Ý!! Bắt buộc chọn cùng 1 người 2 lần, nếu không sẽ không cắn được!'
 			);
 		}
 
 		if (this.type == 'SoiTienTri') {
+			await asyncWait(1000);
 			await this.timingSend({
 				message:
-					'Đêm nay bạn có muốn trở về Sói Thường không? (Sói Tiên Tri không thể vote giết)\n' +
+					'Biến thành Sói Thường không? (Sói Tiên Tri không thể cắn người)\n' +
 					`${gameConfig.symbols[1]} Có ♥\n` +
 					`${gameConfig.symbols[2]} Không 😈`,
 				timing: gameConfig.timeout.SOITIENTRI_RESIGN
@@ -84,8 +87,9 @@ module.exports = class SoiTienTri extends Role {
 			);
 			requests.push(data);
 			if (data.value == '2') {
+				await asyncWait(1000);
 				await this.timingSend({
-					message: 'Đêm nay bạn muốn soi ai? \n' + this.game.chat_playerList(),
+					message: '🔮 Đêm nay soi ai? \n' + this.game.chat_playerList(),
 					timing: gameConfig.timeout.SOITIENTRI_SEER
 				});
 				requests.push(
@@ -97,8 +101,9 @@ module.exports = class SoiTienTri extends Role {
 			}
 		} else {
 			// SoiThuong
+			await asyncWait(1000);
 			await this.timingSend({
-				message: 'Đêm nay bạn muốn cắn ai? \n' + this.game.chat_playerList(),
+				message: '🐺 Đêm nay cắn ai? 💀\n⚠️LƯU Ý!! Bắt buộc chọn cùng 1 người 2 lần, nếu không sẽ không cắn được!\n' + this.game.chat_playerList(),
 				timing: gameConfig.timeout.SOITIENTRI_VOTE
 			});
 			requests.push(

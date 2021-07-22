@@ -1,5 +1,6 @@
 const Role = require('./Role');
 const gameConfig = require('../gameConfig');
+const {asyncWait, random, shuffle} = kb2abot.helpers;
 
 module.exports = class BaoVe extends Role {
 	constructor(options) {
@@ -18,10 +19,10 @@ module.exports = class BaoVe extends Role {
 
 		this.testCommit(value, this.isAlive);
 		if (this.lastProtectIndex == value - 1) {
-			throw new Error('Bạn không được bảo vệ 2 lần cho cùng 1 người chơi!');
+			throw new Error('⚠️ Không được bảo vệ 2 lần cho cùng 1 người chơi!');
 		}
 		const {name, username} = this.game.playerManager.items[value - 1];
-		this.sendMessage(`Bạn đã chọn bảo vệ ${name}(${username})!`);
+		// this.sendMessage(`✨ Đã chọn bảo vệ ${name}!`);
 	}
 
 	async onNightEnd(code, value) {
@@ -31,9 +32,10 @@ module.exports = class BaoVe extends Role {
 	}
 
 	async onNight() {
+		await asyncWait(1000);
 		await this.timingSend({
 			message:
-				'Đêm nay bạn muốn bảo vệ ai? (chỉ nhập số)\n' +
+				'✨ Đêm nay bảo vệ ai?\n' +
 				this.game.chat_playerList({died: false}),
 			timing: gameConfig.timeout.BAOVE
 		});

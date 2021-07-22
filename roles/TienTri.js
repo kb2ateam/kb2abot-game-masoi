@@ -1,5 +1,6 @@
 const Role = require('./Role');
 const gameConfig = require('../gameConfig');
+const {asyncWait, random, shuffle} = kb2abot.helpers;
 
 module.exports = class TienTri extends Role {
 	constructor(options) {
@@ -17,9 +18,9 @@ module.exports = class TienTri extends Role {
 
 		this.testCommit(value, this.isNotSelf);
 		const {name, username} = this.game.playerManager.items[value - 1];
-		this.sendMessage(
-			`Bạn đã chọn xem role của người chơi ${name}(${username})!`
-		);
+		// this.sendMessage(
+		// 	`🔮 Đã chọn xem role của người chơi ${name}!`
+		// );
 	}
 
 	async onNightEnd(code, value) {
@@ -28,13 +29,15 @@ module.exports = class TienTri extends Role {
 
 		const {name, username, type} = this.game.playerManager.items[value - 1];
 		const party = gameConfig.data[type].party > 0 ? 'Dân Làng' : 'Sói';
-		await this.sendMessage(`Phe của ${name}(${username}) là /${party}/`);
+		await asyncWait(1000);
+		await this.sendMessage(`🔮 Phe của ${name} là ${party}`);
 	}
 
 	async onNight() {
+		await asyncWait(1000);
 		await this.timingSend({
 			message:
-				'Đêm nay bạn muốn soi ai? (cấm soi gái và chỉ nhập số)\n' +
+				'🔮 Đêm nay soi ai? \n' +
 				this.game.chat_playerList(),
 			timing: gameConfig.timeout.TIENTRI
 		});

@@ -1,5 +1,6 @@
 const Role = require('./Role');
 const gameConfig = require('../gameConfig');
+const {asyncWait, random, shuffle} = kb2abot.helpers;
 
 module.exports = class PhuThuy extends Role {
 	constructor(options) {
@@ -26,18 +27,18 @@ module.exports = class PhuThuy extends Role {
 			const {name, username} = this.game.playerManager.items[
 				this.iPlayerKilledByWolf
 			];
-			this.sendMessage(
-				`Bạn đã chọn ${
-					value == 1 ? 'CỨU SỐNG' : 'KHÔNG CỨU'
-				} ${name}(${username})!`
-			);
+			// this.sendMessage(
+			// 	`💉 Đã chọn ${
+			// 		value == 1 ? 'CỨU SỐNG' : 'KHÔNG CỨU'
+			// 	} ${name}!`
+			// );
 			break;
 		}
 
 		case gameConfig.code.PHUTHUY_GIET: {
 			this.testCommit(value, this.isAlive, this.isNotSelf);
 			const {name, username} = this.game.playerManager.items[value - 1];
-			this.sendMessage(`Bạn đã chọn giết ${name}(${username})!`);
+			// this.sendMessage(`🧪 Đã chọn giết ${name}!`);
 			break;
 		}
 		}
@@ -70,10 +71,11 @@ module.exports = class PhuThuy extends Role {
 					const {name, username} = this.game.playerManager.items[
 						iPlayerKilledByWolf
 					];
+					await asyncWait(1000);
 					await this.timingSend({
 						message:
-							`Đêm nay ${name}(${username}) sẽ bị lũ sói cắn, bạn có muốn sử dụng bình [cứu người] không? (1 lần duy nhất)\n` +
-							`${gameConfig.symbols[1]} Có ♥\n` +
+							`💉 Đêm nay ${name} bị lũ Sói cắn, dùng bình [cứu người] không? (1 lần duy nhất)\n` +
+							`${gameConfig.symbols[1]} Có ❤️\n` +
 							`${gameConfig.symbols[2]} Không 😈`,
 						timing: gameConfig.timeout.PHUTHUY_CUU
 					});
@@ -85,16 +87,18 @@ module.exports = class PhuThuy extends Role {
 					);
 				}
 			} else {
-				await this.sendMessage('Đêm nay không có ai bị cắn!');
+				await this.sendMessage('📍 Đêm nay không ai bị cắn!');
 			}
 		}
+		
 
 		if (this.potion.kill) {
+			await asyncWait(1000);
 			await this.timingSend({
 				message:
-					`Bạn có muốn sử dụng ${
+					`🧪 Dùng ${
 						requests.length > 0 ? 'thêm ' : ''
-					}bình [giết người] để giết ai không? (1 lần duy nhất)\n` +
+					}bình [giết người] để giết ai không? (1 lần duy nhất)\n ⚠️ Nếu không muốn giết ai hãy nhập "pass"\n` +
 					this.game.chat_playerList({died: false}),
 				timing: gameConfig.timeout.PHUTHUY_GIET
 			});
