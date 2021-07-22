@@ -10,3 +10,13 @@
 ## Config
 ### - Config game tại ~/kb2abot/main/deploy/games/masoi/gameConfig.js (hay nơi mà bạn đặt game này)
 ### - Trong file có các comment hướng dẫn bạn và lưu ý config timeout là xài milliseconds nha.
+
+
+Changelog
+
+_ Fix SoiTienTri alone
+_ Fix cach choi ThoSan
+_ Add roles ThayDong, Minion, PhapSuCam, ChanDoi
+_ Add random vote treo cổ
+_ Bỏ tin nhắn xác nhận value của bot, bỏ bớt, tối giản các tin nhắn thừa, thêm thời gian chờ giữa các tin nhắn
+_ Thay các câu thoại bằng icon
