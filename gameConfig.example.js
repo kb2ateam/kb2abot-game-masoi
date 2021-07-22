@@ -1,3 +1,4 @@
+const version = '1.2.3';
 // Phiên bản của file config, nếu khác thì phải xóa file gameConfig.js
 // Một file gameConfig.js sẽ đc tạo lại sau khi run lại bot
 (async () => {
@@ -12,12 +13,12 @@
 	).data.version;
 	if (exVer != curVer) {
 		console.newLogger.warn(
-			`Da co phien ban moi: ${curVer}! Phien ban hien tai: ${exVer}`
+			`Ma Soi: Da co phien ban moi: ${curVer}! Phien ban hien tai: ${exVer}. Hay truy cap bit.ly/kb2abot`
 		);
 	}
 	if (version != exVer) {
 		console.newLogger.warn(
-			'Phien ban config khong tuong thich co the gay loi, vui long backup va xoa file gameConfig.js'
+			'Ma Soi: Phien ban config khong tuong thich co the gay loi, vui long backup va xoa file gameConfig.js'
 		);
 	}
 })();
@@ -107,6 +108,7 @@ const setup = {
 const arrange = [
 	// Thứ tự gọi Role
 	'BaoVe',
+	'SoiTienTri',
 	'SoiThuong',
 	'PhuThuy',
 	'TienTri',
@@ -127,7 +129,7 @@ const data = {
 	},
 	SoiThuong: {
 		score: -100,
-		party: -150,
+		party: -1,
 		description: 'Mỗi đêm, Sói sẽ chọn 1 dân làng để giết',
 		note: 'Sói có thể chọn không cắn. Sói có thể tự cắn nhau',
 		advice: 'Cố gắng giết hết phe Dân Làng'
