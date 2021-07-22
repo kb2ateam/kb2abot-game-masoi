@@ -12,11 +12,13 @@
 ### - Trong file có các comment hướng dẫn bạn và lưu ý config timeout là xài milliseconds nha.
 
 
-Changelog
 
-### _ Fix SoiTienTri alone
-### _ Fix cach choi ThoSan
-### _ Add roles ThayDong, Minion, PhapSuCam, ChanDoi
-### _ Add random vote treo cổ
-### _ Bỏ tin nhắn xác nhận value của bot, bỏ bớt, tối giản các tin nhắn thừa, thêm thời gian chờ giữa các tin nhắn
-### _ Thay các câu thoại bằng icon
+
+##Changelog
+
+### - Fix SoiTienTri alone
+### - Fix cach choi ThoSan
+### - Add roles ThayDong, Minion, PhapSuCam, ChanDoi
+### - Add random vote treo cổ
+### - Bỏ tin nhắn xác nhận value của bot, bỏ bớt, tối giản các tin nhắn thừa, thêm thời gian chờ giữa các tin nhắn
+### - Thay các câu thoại bằng icon
