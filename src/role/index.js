@@ -1,0 +1,22 @@
+module.exports = {
+	Apprentice: require('./Apprentice'),
+	Bodyguard: require('./Bodyguard'),
+	Cupid: require('./Cupid'),
+	Cursed: require('./Cursed'),
+	Evilseer: require('./Evilseer'),
+	Fruitbrute: require('./Fruitbrute'),
+	Goodseer: require('./Goodseer'),
+	Hunter: require('./Hunter'),
+	Investigator: require('./Investigator'),
+	Lycan: require('./Lycan'),
+	Martyr: require('./Martyr'),
+	Mayor: require('./Mayor'),
+	Oldman: require('./Oldman'),
+	Priest: require('./Priest'),
+	Spellcaster: require('./Spellcaster'),
+	Tanner: require('./Tanner'),
+	Villager: require('./Villager'),
+	Werewolf: require('./Werewolf'),
+	Witch: require('./Witch'),
+	Wolfcub: require('./Wolfcub')
+};

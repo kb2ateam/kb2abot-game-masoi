@@ -1,6 +1,6 @@
 {
   "name": "kb2abot-games-masoi",
-  "version": "1.2.0",
+  "version": "1.2.3",
   "description": "Game Ma Sói cho kb2abot",
   "main": "index.js",
   "scripts": {
