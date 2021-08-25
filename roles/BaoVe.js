@@ -32,7 +32,7 @@ module.exports = class BaoVe extends Role {
 	}
 
 	async onNight() {
-		await asyncWait(1000);
+		
 		await this.timingSend({
 			message:
 				'✨ Đêm nay bảo vệ ai?\n' +

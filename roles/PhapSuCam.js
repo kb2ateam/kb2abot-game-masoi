@@ -30,13 +30,14 @@ module.exports = class PhapSuCam extends Role {
 		await super.onNightEnd(code, value);
 		this.lastMuteIndex = value - 1;
         const mutedPlayer = this.game.playerManager.items[this.lastMuteIndex]; 
+		
         await this.game.sendMessage(
-            `<------------------->\n☀️ ${mutedPlayer.name} bị khoá mõm 🤐\n<------------------->`
+            `<------------------->\n☀️ ${mutedPlayer.name} đã bị khoá mõm vì nói nhiều 🤐\n<------------------->`
         );
 	}
 
 	async onNight() {
-		await asyncWait(1000);
+	
 		await this.timingSend({
 			message:
 				'🤐 Đêm nay khoá mõm ai?\n' +

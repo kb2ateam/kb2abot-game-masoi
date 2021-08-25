@@ -24,9 +24,9 @@ module.exports = class PhuThuy extends Role {
 		switch (code) {
 		case gameConfig.code.PHUTHUY_CUU: {
 			this.testCommit(value, ['1', '2']);
-			const {name, username} = this.game.playerManager.items[
-				this.iPlayerKilledByWolf
-			];
+			//const {name, username} = this.game.playerManager.items[
+				//this.iPlayerKilledByWolf
+			//];
 			// this.sendMessage(
 			// 	`💉 Đã chọn ${
 			// 		value == 1 ? 'CỨU SỐNG' : 'KHÔNG CỨU'
@@ -65,13 +65,40 @@ module.exports = class PhuThuy extends Role {
 				const movements = this.game.history_last().movements;
 				let iPlayerKilledByWolf = this.game.u_getIPlayerKilledByWolf(movements);
 				this.iPlayerKilledByWolf = iPlayerKilledByWolf;
+				let iPlayerKilledBySeerWolf = -1;
+
+		let alone = false;
+		const arraytri = Array.from(this.game.playerManager.items);
+		const werewolfs = arraytri.filter(
+			player => (player.type == "SoiThuong")
+		);
+		
+		const alives = werewolfs.filter(wolves => !wolves.died);
+
+		if ((alives.length <= 0)){
+			alone = true;
+		}
+
+		if ((alone == true)){
+			for (const movement of this.game.u_getMovements('SoiTienTri', movements)) {
+				for (const commit of movement.data) {
+					if (commit.value == null) continue;
+					switch (commit.code) {
+					case gameConfig.code.SOITIENTRI_VOTE:
+						iPlayerKilledBySeerWolf = commit.value - 1;
+						iPlayerKilledByWolf = iPlayerKilledBySeerWolf;
+						break;
+					}
+				}
+		}
+	}
 
 				if (iPlayerKilledByWolf != -1) {
 					// not tie
 					const {name, username} = this.game.playerManager.items[
 						iPlayerKilledByWolf
 					];
-					await asyncWait(1000);
+				
 					await this.timingSend({
 						message:
 							`💉 Đêm nay ${name} bị lũ Sói cắn, dùng bình [cứu người] không? (1 lần duy nhất)\n` +
@@ -93,7 +120,7 @@ module.exports = class PhuThuy extends Role {
 		
 
 		if (this.potion.kill) {
-			await asyncWait(1000);
+			await asyncWait(2000);
 			await this.timingSend({
 				message:
 					`🧪 Dùng ${

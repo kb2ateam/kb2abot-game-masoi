@@ -17,11 +17,11 @@ module.exports = class SoiTienTri extends Role {
 			return super.commitChecker(code, value);
 
 		switch (code) {
-		case gameConfig.code.SOITIENTRI_RESIGN:
-			this.testCommit(value, ['1', '2']);
-			if (value == 1)
-				this.sendMessage('🐺 Sẽ biến về Sói Thường sau đêm nay');
-			break;
+		// case gameConfig.code.SOITIENTRI_RESIGN:
+		// 	this.testCommit(value, ['1', '2']);
+		// 	if (value == 1)
+		// 		this.sendMessage('🐺 Sẽ biến về Sói Thường sau đêm nay');
+		// 	break;
 		case gameConfig.code.SOITIENTRI_SEER: {
 			this.testCommit(value, this.isNotSelf);
 			const {name, username} = this.game.playerManager.items[value - 1];
@@ -42,9 +42,9 @@ module.exports = class SoiTienTri extends Role {
 		await super.onNightEnd(code, value);
 
 		switch (code) {
-		case gameConfig.code.SOITIENTRI_RESIGN:
-			if (value == 1) this.type = 'SoiThuong';
-			break;
+		// case gameConfig.code.SOITIENTRI_RESIGN:
+		// 	if (value == 1) this.type = 'SoiThuong';
+		// 	break;
 		case gameConfig.code.SOITIENTRI_SEER: {
 			const {name, username, type} = this.game.playerManager.items[value - 1];
 			const party = gameConfig.data[type].party > 0 ? 'Dân Làng' : 'Sói';
@@ -57,39 +57,42 @@ module.exports = class SoiTienTri extends Role {
 	async onNight() {
 		const requests = [];
 
-		let alone = true;
-		for (const player of this.game.playerManager.items) {
-			if (gameConfig.data[player.type].party == -1 && player != this && !player.died) {
-				alone = false;
-				break;
-			}
+		let alone = false;
+		const arraytri = Array.from(this.game.playerManager.items);
+		const werewolfs = arraytri.filter(
+			player => (player.type == "SoiThuong")
+		);
+		
+		const alives = werewolfs.filter(wolves => !wolves.died);
+
+		if ((alives.length <= 0)){
+			alone = true;
 		}
-		if ((alone) && this.type == 'SoiTienTri') {
-			this.type = 'SoiThuong';
-			await asyncWait(1000);
+
+		if ((alone == true) && this.type == 'SoiTienTri') {
+			//this.type = 'SoiThuong';
 			await this.sendMessage(
-				'🐺 Chỉ còn bạn trong phe Sói nên đã trở thành Sói Thường!\n⚠️LƯU Ý!! Bắt buộc chọn cùng 1 người 2 lần, nếu không sẽ không cắn được!'
+				'🐺 Bạn sẽ cắn người vì Sói Thường đã chết hết!\n⚠️BẮT BUỘC CHỌN CÙNG 1 NGƯỜI 2 LẦN(NẾU CÓ), NẾU KHÔNG SẼ KHÔNG CẮN ĐƯỢC!⚠️'
 			);
 		}
 
-		if (this.type == 'SoiTienTri') {
-			await asyncWait(1000);
-			await this.timingSend({
-				message:
-					'Biến thành Sói Thường không? (Sói Tiên Tri không thể cắn người)\n' +
-					`${gameConfig.symbols[1]} Có ♥\n` +
-					`${gameConfig.symbols[2]} Không 😈`,
-				timing: gameConfig.timeout.SOITIENTRI_RESIGN
-			});
-			const data = await this.request(
-				gameConfig.code.SOITIENTRI_RESIGN,
-				gameConfig.timeout.SOITIENTRI_RESIGN
-			);
-			requests.push(data);
-			if (data.value == '2') {
-				await asyncWait(1000);
+		if ((alone == false) && this.type == 'SoiTienTri') {
+			
+			// await this.timingSend({
+			// 	message:
+			// 		'Biến thành Sói Thường không? (Sói Tiên Tri không thể cắn người)\n' +
+			// 		`${gameConfig.symbols[1]} Có ♥\n` +
+			// 		`${gameConfig.symbols[2]} Không 😈`,
+			// 	timing: gameConfig.timeout.SOITIENTRI_RESIGN
+			// });
+			// const data = await this.request(
+			// 	gameConfig.code.SOITIENTRI_RESIGN,
+			// 	gameConfig.timeout.SOITIENTRI_RESIGN
+			// );
+			// requests.push(data);
+
 				await this.timingSend({
-					message: '🔮 Đêm nay soi ai? \n' + this.game.chat_playerList(),
+					message: '🔮 Đêm nay soi ai? \n' + this.game.chat_playerList({died: false}),
 					timing: gameConfig.timeout.SOITIENTRI_SEER
 				});
 				requests.push(
@@ -98,12 +101,12 @@ module.exports = class SoiTienTri extends Role {
 						gameConfig.timeout.SOITIENTRI_SEER
 					)
 				);
-			}
-		} else {
+			
+		} 
+		if ((alone == true) && this.type == 'SoiTienTri') {
 			// SoiThuong
-			await asyncWait(1000);
 			await this.timingSend({
-				message: '🐺 Đêm nay cắn ai? 💀\n⚠️LƯU Ý!! Bắt buộc chọn cùng 1 người 2 lần, nếu không sẽ không cắn được!\n' + this.game.chat_playerList(),
+				message: '🐺 Đêm nay cắn ai? 💀\n⚠️LƯU Ý!! BẮT BUỘC CHỌN CÙNG 1 NGƯỜI 2 LẦN(NẾU CÓ), NẾU KHÔNG SẼ KHÔNG CẮN ĐƯỢC!⚠️\n' + this.game.chat_playerList({died: false}),
 				timing: gameConfig.timeout.SOITIENTRI_VOTE
 			});
 			requests.push(

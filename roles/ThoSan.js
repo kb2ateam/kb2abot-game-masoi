@@ -48,7 +48,7 @@ module.exports = class ThoSan extends Role {
 	}
 
 	async onNight() {
-		await asyncWait(1000);
+	
 		await this.timingSend({
 			message:
 				'🔫 Đêm nay ghim bắn ai?\n' +
@@ -78,14 +78,15 @@ module.exports = class ThoSan extends Role {
 			const deadPlayer = this.game.playerManager.items[this.pinnedIndex];
 			// await this.game.sendMessage('*BẰNGGGGGGGGGGGG*');
 			// await deadPlayer.sendMessage('Bạn đã bị trúng đạn :/ \n*die');
-			await asyncWait(1000);
+			
 			if(!deadPlayer.died){
+				await asyncWait(2000);
 				await this.game.sendMessage(
 					`☀️ ${deadPlayer.name} đã ${
 						lmao[random(0, lmao.length - 1)]
 					}`
 				);}
-			await deadPlayer.die();
+			await deadPlayer.die('ThoSan');
 		}
 	}  else {
 			if (this.pinnedIndex != -1) {
@@ -97,16 +98,17 @@ module.exports = class ThoSan extends Role {
 				const deadPlayer = this.game.playerManager.items[this.pinnedIndex];
 				// await this.game.sendMessage('*PẰNG*');
 				// await deadPlayer.sendMessage('Bạn đã bị trúng đạn :/ \n*die');
-				await asyncWait(1000);
+				
 				if(!deadPlayer.died){
+				await asyncWait(2000);
 				await this.game.sendMessage(
 					`☀️ ${deadPlayer.name} đã ${
 						lmao[random(0, lmao.length - 1)]
 					}`
 				);}
-				await deadPlayer.die();
+				await deadPlayer.die('ThoSan');
 			} else {
-				await asyncWait(1000);
+				await asyncWait(2000);
 				await this.sendMessage(
 					'⚠️ Bạn chưa ghim ai, không thể bắn trước khi chết!'
 				);

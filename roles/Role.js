@@ -44,7 +44,7 @@ module.exports = class Role {
 	
 	//var randomValue = Math.floor(Math.random() * array.length);
 	var randomValue = array[random(0,array.length-1)];
-				await asyncWait(1500);
+				
 				//this.sendMessage(`🔥 Random vote player ${randomValue}!\n🔥 Any bug please inbox Andrei!`);
 				this.commitChecker(this.code, randomValue);
 				this.commit(randomValue);
@@ -93,7 +93,7 @@ module.exports = class Role {
 	}
 
 	async voteKill() {
-		await asyncWait(1000);
+		
 		await this.timingSend({
 			message:
 				'🔥 Chọn 1 người để vote treo cổ\n⚠️ Random vote bằng cách nhắn "rand" !\n⚠️ Bỏ qua vote bằng cách nhắn "pass" !\n' +
@@ -193,4 +193,9 @@ module.exports = class Role {
 	async die() {
 		this.died = true;
 	}
+
+	async live() {
+		this.died = false;
+	}
+
 };

@@ -26,19 +26,25 @@ module.exports = class TienTri extends Role {
 	async onNightEnd(code, value) {
 		if (!value) return;
 		await super.onNightEnd(code, value);
-
+		let message = '';
 		const {name, username, type} = this.game.playerManager.items[value - 1];
-		const party = gameConfig.data[type].party > 0 ? 'Dân Làng' : 'Sói';
-		await asyncWait(1000);
-		await this.sendMessage(`🔮 Phe của ${name} là ${party}`);
+		const party = gameConfig.data[type].party 
+		//> 0 ? 'Dân Làng' : 'Sói';
+		if ((party == 1) && (this.game.playerManager.items[value - 1].type == "Lover") ) {message = "Trung lập";}
+		if ((party == 1) && (this.game.playerManager.items[value - 1].type !== "Lover")){message = "Dân làng";}
+		if ((party == -1) && (this.game.playerManager.items[value - 1].type !== "Minion")){message = "Sói";}
+		if ((party == -1) && (this.game.playerManager.items[value - 1].type == "Minion")){message = "Dân làng";}
+		if ((party == 2)){message = "Trung lập";}
+	
+		await this.sendMessage(`🔮 Phe của ${name} là ${message}`);
 	}
 
 	async onNight() {
-		await asyncWait(1000);
+	
 		await this.timingSend({
 			message:
 				'🔮 Đêm nay soi ai? \n' +
-				this.game.chat_playerList(),
+				this.game.chat_playerList({died: false}),
 			timing: gameConfig.timeout.TIENTRI
 		});
 		return [

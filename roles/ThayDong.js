@@ -46,15 +46,15 @@ module.exports = class ThayDong extends Role {
         
 		this.lastRealiveIndex = value - 1;
         const realivedPlayer = this.game.playerManager.items[this.lastRealiveIndex];
-        this.game.playerManager.items[this.lastRealiveIndex].died = false;
+        this.game.playerManager.items[this.lastRealiveIndex].live('ThayDong');
 		 switch (code) {
          case gameConfig.code.THAYDONG:
                  this.potion.realive = false;
                  break;
              }
-			 await asyncWait(1000);
+	
         await this.game.sendMessage(
-            `<------------------->\n☀️ ${realivedPlayer.name} đã được hồi sinh 🃏\n<------------------->`
+            `<------------------------>\n☀️ ${realivedPlayer.name} đã được hồi sinh 🃏\n<------------------------>`
         );
 	}
 
@@ -75,7 +75,7 @@ module.exports = class ThayDong extends Role {
 	}
 
         if( (this.potion.realive) && (deadCount > 0) ){
-        await asyncWait(1000);
+    
 		await this.timingSend({
 			message:
 				'🌙 Đêm nay hồi sinh ai?\nKhông có ai hoặc không hồi sinh thì nhắn "pass"\n' +

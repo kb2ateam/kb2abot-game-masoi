@@ -22,7 +22,7 @@ module.exports = class SoiThuong extends Role {
 	}
 
 	async onNight() {
-		await asyncWait(1000);
+	
 		await this.timingSend({
 			message:
 				'🐺 Đêm nay cắn ai ? 💀💀\n' +
