@@ -15,10 +15,3 @@
 
 
 ## Changelog
-
-### - Fix SoiTienTri alone
-### - Fix cach choi ThoSan
-### - Add roles ThayDong, Minion, PhapSuCam, ChanDoi
-### - Add random vote treo cổ
-### - Bỏ tin nhắn xác nhận value của bot, bỏ bớt, tối giản các tin nhắn thừa, thêm thời gian chờ giữa các tin nhắn
-### - Thay các câu thoại bằng icon
