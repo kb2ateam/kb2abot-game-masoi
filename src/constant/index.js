@@ -1,5 +1,2 @@
-module.exports = {
-	Cycle: require('./Cycle'),
-	Data: require('./Data'),
-	FunnyDeaths: require('./FunnyDeaths') // word list deaths
-};
+export { default as Data } from "./Data"
+export { default as FunnyDeaths } from "./FunnyDeaths"

@@ -1,4 +1,2 @@
-module.exports = {
-	Death: require('./Death.type'),
-	Movement: require('./Movement.type')
-};
+export {default as Death} from "./Death.type"
+export {default as Movement} from "./Movement.type"

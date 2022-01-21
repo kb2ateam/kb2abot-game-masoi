@@ -1,22 +1,14 @@
-module.exports = {
-	Apprentice: require('./Apprentice'),
-	Bodyguard: require('./Bodyguard'),
-	Cupid: require('./Cupid'),
-	Cursed: require('./Cursed'),
-	Evilseer: require('./Evilseer'),
-	Fruitbrute: require('./Fruitbrute'),
-	Goodseer: require('./Goodseer'),
-	Hunter: require('./Hunter'),
-	Investigator: require('./Investigator'),
-	Lycan: require('./Lycan'),
-	Martyr: require('./Martyr'),
-	Mayor: require('./Mayor'),
-	Oldman: require('./Oldman'),
-	Priest: require('./Priest'),
-	Spellcaster: require('./Spellcaster'),
-	Tanner: require('./Tanner'),
-	Villager: require('./Villager'),
-	Werewolf: require('./Werewolf'),
-	Witch: require('./Witch'),
-	Wolfcub: require('./Wolfcub')
-};
+export { default as Apprentice } from "./Apprentice"
+export { default as Bodyguard } from "./Bodyguard"
+export { default as Cupid } from "./Cupid"
+export { default as Evilseer } from "./Evilseer"
+export { default as Fruitbrute } from "./Fruitbrute"
+export { default as Goodseer } from "./Goodseer"
+export { default as Hunter } from "./Hunter"
+export { default as Investigator } from "./Investigator"
+export { default as Lycan } from "./Lycan"
+export { default as Oldman } from "./Oldman"
+export { default as Tanner } from "./Tanner"
+export { default as Villager } from "./Villager"
+export { default as Werewolf } from "./Werewolf"
+export { default as Witch } from "./Witch"

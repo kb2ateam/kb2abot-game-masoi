@@ -1,11 +1,11 @@
-const Gang = require('../gang');
-const {Data} = require('../constant');
-const {DeathType} = require('../enum');
-const {gameConfig} = require('../helper');
-const {Movement} = require('../type');
+import { Data } from "../constant"
+import { DeathType } from "../enum"
+import { Movement } from "../type"
+import * as Gang from "../gang"
 
-module.exports = class Role {
+export default class Role {
 	constructor({
+		id,
 		index,
 		world,
 		name,
@@ -14,63 +14,64 @@ module.exports = class Role {
 		role = this.constructor,
 		party = Data[this.constructor.name].party
 	} = {}) {
-		this.index = index; // Không dùng id để phân biệt, dùng index vì thao tác array nhanh hơn
-		this.world = world;
-		this.name = name;
-		this.threadID = threadID;
-		this.died = false;
-		this.gang = gang;
-		this.resolve = () => {};
-		this.role = role;
-		this.party = party;
+		this.id = id
+		this.index = index // Không dùng id để phân biệt, dùng index vì thao tác array nhanh hơn
+		this.world = world
+		this.name = name
+		this.threadID = threadID
+		this.died = false
+		this.gang = gang
+		this.resolve = () => {}
+		this.role = role
+		this.party = party
 	}
 
 	async onMessage(message, reply) {
-		if (!this.resolve.ability) return;
+		if (!this.resolve.ability) return
 		switch (message.body.toLowerCase()) {
-		case 'pass':
-			reply('Bạn đã bỏ lượt!');
-			this.resolve([null, null]);
-			break;
+		case "pass":
+			reply("Bạn đã bỏ lượt!")
+			this.resolve([null, null])
+			break
 		default:
 			try {
-				const checkerResult = this.resolve.ability.check(this, message.body);
-				this.resolve([message.body, checkerResult]);
+				const checkerResult = this.resolve.ability.check(this, message.body)
+				this.resolve([message.body, checkerResult])
 			} catch (e) {
-				await reply(e.message);
+				await reply(e.message)
 			}
-			break;
+			break
 		}
 	}
 
-	request(ability, time = gameConfig.timeout[ability.name] || 30000) {
+	request(ability, time = this.plugin.config.timeout[ability.name] || 30000) {
 		return new Promise(resolve => {
 			const timeoutID = setTimeout(() => {
-				this.sendMessage('Đã hết thời gian!');
-				this.resolve([null, null]);
-			}, time);
+				this.sendMessage("Đã hết thời gian!")
+				this.resolve([null, null])
+			}, time)
 
 			this.resolve = result => {
-				this.resolve = () => {};
+				this.resolve = () => {}
 				if (result == null) {
-					return resolve(new Movement(ability, null, this.index, null, 'real'));
+					return resolve(new Movement(ability, null, this.index, null, "real"))
 				}
-				const [value, checkerResult] = result;
-				clearTimeout(timeoutID);
+				const [value, checkerResult] = result
+				clearTimeout(timeoutID)
 				resolve(
-					new Movement(ability, value, this.index, checkerResult, 'real')
-				);
-			};
+					new Movement(ability, value, this.index, checkerResult, "real")
+				)
+			}
 
-			this.resolve.ability = ability;
+			this.resolve.ability = ability
 			this.sendMessage(
-				this.world.game.timing({message: ability.question(this), time})
-			);
-		});
+				this.world.game.timing({ message: ability.question(this), time })
+			)
+		})
 	}
 
 	async sendMessage(message, threadID = this.threadID) {
-		await this.world.game.sendMessage(message, threadID);
+		await this.world.game.sendMessage(message, threadID)
 	}
 
 	format(value, ...formats) {
@@ -79,52 +80,52 @@ module.exports = class Role {
 				if (!formats[index].includes(value))
 					throw new Error(
 						`Vui lòng nhập 1 trong các giá trị sau: ${formats[index].join(
-							', '
+							", "
 						)}!`
-					);
+					)
 			} else {
-				value = formats[index](this, value);
+				value = formats[index](this, value)
 			}
 		}
-		return value;
+		return value
 	}
 
 	async nightend(movements, listDeaths) {}
 
 	async onNight() {
-		return [];
+		return []
 	}
 
 	async die(death) {
-		this.died = true;
+		this.died = true
 		let rep =
 			`Chúng tôi vô cùng thương tiếc báo tin: ${this.name} (bạn) ` +
 			`đã hi sinh vào đêm thứ ${
-				this.world.history.items.filter(item => item.event == 'night').length
-			}!\n`;
+				this.world.history.items.filter(item => item.event == "night").length
+			}!\n`
 		switch (death.type) {
 		case DeathType.P2P:
 			if (death.killer != death.victim)
-				rep += `Nguyên nhân chết: Bị ${death.killer.name} (${death.killer.constructor.name}) giết\n`;
-			else rep += 'Nguyên nhân chết: Tự tử';
-			break;
+				rep += `Nguyên nhân chết: Bị ${death.killer.name} (${death.killer.constructor.name}) giết\n`
+			else rep += "Nguyên nhân chết: Tự tử"
+			break
 		case DeathType.GANG:
-			rep += `Nguyên nhân chết: Băng đảng ${death.killer.constructor.name} hội đồng oánh chết\n`;
-			break;
+			rep += `Nguyên nhân chết: Băng đảng ${death.killer.constructor.name} hội đồng oánh chết\n`
+			break
 		case DeathType.LYNCH:
-			rep += 'Nguyên nhân chết: Dân làng treo cổ\n';
-			break;
+			rep += "Nguyên nhân chết: Dân làng treo cổ\n"
+			break
 		case DeathType.SIMP:
-			rep += `Nguyên nhân chết: Yêu đơn phương ${this.waifu.name}\n`;
-			break;
+			rep += `Nguyên nhân chết: Yêu đơn phương ${this.waifu.name}\n`
+			break
 		default:
-			rep += 'Nguyên nhân chết: Chưa rõ\n';
+			rep += "Nguyên nhân chết: Chưa rõ\n"
 		}
-		rep += 'Lưu ý: Không được chat khi đã chết!\n';
-		await this.sendMessage(rep);
+		rep += "Lưu ý: Không được chat khi đã chết!\n"
+		await this.sendMessage(rep)
 	}
 
 	isWin() {
-		return false;
+		return false
 	}
-};
+}

@@ -1,4 +1,4 @@
-module.exports = class Ability {
+export default class Ability {
 	// overide
 	static question(player) {}
 
@@ -7,4 +7,4 @@ module.exports = class Ability {
 
 	// overide
 	static async nightend(player, value, listDeaths) {}
-};
+}

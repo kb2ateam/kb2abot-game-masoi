@@ -1,7 +1,5 @@
-module.exports = {
-	alive: require('./alive.format'),
-	diff: require('./diff.format'),
-	diff2: require('./diff2.format'),
-	notSelf: require('./notSelf.format'),
-	validIndex: require('./validIndex.format')
-};
+export { default as alive } from "./alive.format"
+export { default as diff } from "./diff.format"
+export { default as diff2 } from "./diff2.format"
+export { default as notSelf } from "./notSelf.format"
+export { default as validIndex } from "./validIndex.format"

@@ -1,17 +1,17 @@
-const Ability = require('../ability');
-const Villager = require('./Villager');
+import {Seer} from "../ability"
+import Villager from "./Villager"
 
-module.exports = class Goodseer extends Villager {
+export default class Goodseer extends Villager {
 	constructor(options) {
 		super({
 			...options,
 			...{
 				// your configuration
 			}
-		});
+		})
 	}
 
 	async onNight() {
-		return [await this.request(Ability.Seer)];
+		return [await this.request(Seer)]
 	}
-};
+}

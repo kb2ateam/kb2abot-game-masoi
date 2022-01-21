@@ -1,16 +1,16 @@
-const Ability = require('../ability');
-const Villager = require('./Villager');
+import {Protect} from "../ability"
+import Villager from "./Villager"
 
-module.exports = class Bodyguard extends Villager {
+export default class Bodyguard extends Villager {
 	constructor(options) {
 		super({
 			...options,
 			...{}
-		});
-		this.lastProtectIndex = -1;
+		})
+		this.lastProtectIndex = -1
 	}
 
 	async onNight() {
-		return [await this.request(Ability.Protect)];
+		return [await this.request(Protect)]
 	}
-};
+}

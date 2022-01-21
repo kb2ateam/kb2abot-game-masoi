@@ -1,13 +1,13 @@
-const Werewolf = require('./Werewolf');
-const Villager = require('./Villager');
+import Werewolf from "./Werewolf"
+import Villager from "./Villager"
 
-module.exports = class Lycan extends Villager {
+export default class Lycan extends Villager {
 	constructor(options) {
 		super({
 			...options,
 			...{
 				role: Werewolf
 			}
-		});
+		})
 	}
-};
+}

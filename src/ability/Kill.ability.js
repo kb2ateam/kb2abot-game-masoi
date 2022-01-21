@@ -1,10 +1,10 @@
-const Format = require('../format');
-const Ability = require('./Ability');
+import * as Format from "../format"
+import Ability from "./Ability"
 
-module.exports = class Kill extends Ability {
+export default class Kill extends Ability {
 	static question(player) {
-		'Bạn muốn giết ai trong danh sách:\n' +
-			player.world.game.listPlayer({died: false});
+		"Bạn muốn giết ai trong danh sách:\n" +
+			player.world.game.listPlayer({died: false})
 	}
 
 	static check(player, value) {
@@ -13,14 +13,14 @@ module.exports = class Kill extends Ability {
 			Format.validIndex,
 			Format.alive,
 			Format.notSelf
-		);
-		const {name} = player.world.items[index];
-		player.sendMessage(`Bạn đã chọn giết ${name}!`);
-		return index;
+		)
+		const {name} = player.world.players[index]
+		player.sendMessage(`Bạn đã chọn giết ${name}!`)
+		return index
 	}
 
 	static async nightend(player, index, listDeaths) {
-		if (index == null) return;
-		return index;
+		if (index == null) return
+		return index
 	}
-};
+}

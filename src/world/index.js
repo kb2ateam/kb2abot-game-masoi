@@ -1,3 +1,1 @@
-module.exports = {
-	Normal: require('./Normal')
-};
+export {default as Normal} from "./Normal"

@@ -1,29 +1,29 @@
-const Ability = require('../ability');
-const {Party} = require('../enum');
-const Gang = require('../gang');
-const Role = require('./Role');
+import Role from "./Role"
+import {Werewolf as WerewolfGang} from "../gang"
+import {Bite} from "../ability"
+import { Party } from "../enum"
 
-module.exports = class Werewolf extends Role {
+export default class Werewolf extends Role {
 	constructor(options) {
 		super({
 			...options,
 			...{
-				gang: Gang.Werewolf
+				gang: WerewolfGang
 			}
-		});
+		})
 	}
 
 	async voteBite() {
-		return [await this.request(Ability.Bite)];
+		return [await this.request(Bite)]
 	}
 
 	isWin() {
-		const werewolfCount = this.world.items.filter(
+		const werewolfCount = this.world.players.filter(
 			player => !player.died && player.party == Party.WEREWOLF
-		).length;
-		const villagerCount = this.world.items.filter(
+		).length
+		const villagerCount = this.world.players.filter(
 			player => !player.died && player.party == Party.VILLAGER
-		).length;
-		return werewolfCount >= villagerCount;
+		).length
+		return werewolfCount >= villagerCount
 	}
-};
+}

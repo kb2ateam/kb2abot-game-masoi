@@ -1,15 +1,16 @@
 {
-  "name": "kb2abot-games-masoi",
-  "version": "1.2.3",
+  "type": "module",
+  "name": "kb2abot-game-masoi",
+  "version": "2.1.0",
   "description": "Game Ma Sói cho kb2abot",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "update": "git fetch origin main && git reset --hard origin/main",
-    "build": "node build.js"
+    "build": "node build.js",
+    "start": "node --es-module-specifier-resolution=node src"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kb2ateam/kb2abot-games-masoi.git"
+    "url": "git+https://github.com/kb2ateam/kb2abot-game-masoi.git"
   },
   "keywords": [
     "masoi"
@@ -17,14 +18,20 @@
   "author": "khoakomlem",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kb2ateam/kb2abot-games-masoi/issues"
+    "url": "https://github.com/kb2ateam/kb2abot-game-masoi/issues"
   },
-  "homepage": "https://github.com/kb2ateam/kb2abot-games-masoi#readme",
+  "homepage": "https://github.com/kb2ateam/kb2abot-game-masoi#readme",
   "devDependencies": {
-    "eslint": "^7.21.0"
+    "eslint": "^7.26.0"
   },
   "dependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/eslint-parser": "^7.16.3",
+    "@babel/plugin-syntax-top-level-await": "^7.14.5",
     "adm-zip": "^0.5.4",
+    "axios": "^0.24.0",
+    "deep-extend": "^0.6.0",
+    "hjson": "^3.2.2",
     "safer-buffer": "^2.1.2"
   }
 }

@@ -1,21 +1,21 @@
-const Werewolf = require('./Werewolf');
-const Villager = require('./Villager');
+import Werewolf from "./Werewolf"
+import Villager from "./Villager"
 
-module.exports = class Oldman extends Villager {
+export default class Oldman extends Villager {
 	constructor(options) {
 		super({
 			...options,
 			...{}
-		});
-		this.dayPassed = 0;
+		})
+		this.dayPassed = 0
 	}
 
 	async nightend() {
-		const wwAmount = this.world.items.filter(
+		const wwAmount = this.world.players.filter(
 			player => player.constructor == Werewolf
-		).length;
+		).length
 		if (++this.dayPassed >= wwAmount + 1) {
-			return this.index;
+			return this.index
 		}
 	}
-};
+}

@@ -1,23 +1,22 @@
-const Gang = require('../gang');
-const Werewolf = require('./Werewolf');
+import Werewolf from "./Werewolf"
 
-module.exports = class Fruitbrute extends Werewolf {
+export default class Fruitbrute extends Werewolf {
 	constructor(options) {
 		super({
 			...options,
 			...{}
-		});
+		})
 	}
 
 	async voteBite() {
-		return this.isAlone() ? [] : await super.voteBite();
+		return this.isAlone() ? [] : await super.voteBite()
 	}
 
 	isAlone() {
-		const werewolfs = this.world.items.filter(
+		const werewolfs = this.world.players.filter(
 			player => player.role == Werewolf
-		);
-		const alives = werewolfs.filter(werewolf => !werewolf.died);
-		return alives.length <= 0;
+		)
+		const alives = werewolfs.filter(werewolf => !werewolf.died)
+		return alives.length <= 0
 	}
-};
+}

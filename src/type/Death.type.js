@@ -1,10 +1,10 @@
-const {DeathType} = require('../enum');
+import {DeathType} from "../enum"
 
-module.exports = class Death {
+export default class Death {
 	constructor(killer, victim, type = DeathType.P2P) {
-		this.killer = killer; // if type == DeathType.LYNCH then killer will be array vote chart
-		this.victim = victim;
-		this.index = victim.index;
-		this.type = type;
+		this.killer = killer // if type == DeathType.LYNCH then killer will be array vote chart
+		this.victim = victim
+		this.index = victim.index
+		this.type = type
 	}
-};
+}

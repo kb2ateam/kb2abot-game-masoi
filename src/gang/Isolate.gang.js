@@ -1,3 +1,3 @@
-const Gang = require('./Gang');
+import Gang from "./Gang"
 
-module.exports = class Isolate extends Gang {};
+export default class Isolate extends Gang {}

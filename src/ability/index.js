@@ -1,10 +1,8 @@
-module.exports = {
-	Bite: require('./Bite.ability'),
-	Investigator: require('./Investigator.ability'),
-	Kill: require('./Kill.ability'),
-	Pair: require('./Pair.ability'),
-	Protect: require('./Protect.ability'),
-	RoleReveal: require('./RoleReveal.ability'),
-	Seer: require('./Seer.ability'),
-	VoteLynch: require('./VoteLynch.ability')
-};
+export { default as Bite } from "./Bite.ability"
+export { default as Investigator } from "./Investigator.ability"
+export { default as Kill } from "./Kill.ability"
+export { default as Pair } from "./Pair.ability"
+export { default as Protect } from "./Protect.ability"
+export { default as RoleReveal } from "./RoleReveal.ability"
+export { default as Seer } from "./Seer.ability"
+export { default as VoteLynch } from "./VoteLynch.ability"

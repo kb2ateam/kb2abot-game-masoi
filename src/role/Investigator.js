@@ -1,15 +1,15 @@
-const Ability = require('../ability');
-const Villager = require('./Villager');
+import {Investigator as InvestigatorAbility} from "../ability"
+import Villager from "./Villager"
 
-module.exports = class Investigator extends Villager {
+export default class Investigator extends Villager {
 	constructor(options) {
 		super({
 			...options,
 			...{}
-		});
+		})
 	}
 
 	async onNight() {
-		return [await this.request(Ability.Investigator)];
+		return [await this.request(InvestigatorAbility)]
 	}
-};
+}

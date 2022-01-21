@@ -1,22 +1,22 @@
-const Ability = require('../ability');
-const Villager = require('./Villager');
+import {Pair} from "../ability"
+import Villager from "./Villager"
 
-module.exports = class Cupid extends Villager {
+export default class Cupid extends Villager {
 	constructor(options) {
 		super({
 			...options,
 			...{}
-		});
-		this.called = false;
-		this.pairs = [];
+		})
+		this.called = false
+		this.pairs = []
 	}
 
 	async onNight() {
 		if (!this.called) {
-			const response = await this.request(Ability.Pair);
-			if (response.value != null) this.called = true;
-			return [response];
+			const response = await this.request(Pair)
+			if (response.value != null) this.called = true
+			return [response]
 		}
-		return [];
+		return []
 	}
-};
+}

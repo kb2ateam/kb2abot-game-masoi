@@ -1,29 +1,29 @@
-const {Party} = require('../enum');
-const Format = require('../format');
-const Ability = require('./Ability');
+import {Party} from "../enum"
+import * as Format from "../format"
+import Ability from "./Ability"
 
-module.exports = class Seer extends Ability {
+export default class Seer extends Ability {
 	static question(player) {
 		return (
-			'Bạn muốn soi ai trong danh sách:\n' + player.world.game.listPlayer()
-		);
+			"Bạn muốn soi ai trong danh sách:\n" + player.world.game.listPlayer()
+		)
 	}
 
 	static check(player, value) {
-		const index = player.format(value, Format.validIndex, Format.notSelf);
+		const index = player.format(value, Format.validIndex, Format.notSelf)
 		player.sendMessage(
-			`Bạn đã chọn xem phe của người chơi ${player.world.items[index].name}!`
-		);
-		return index;
+			`Bạn đã chọn xem phe của người chơi ${player.world.players[index].name}!`
+		)
+		return index
 	}
 
 	static async nightend(player, index, listDeaths) {
-		if (index == null) return;
-		const target = player.world.items[index];
+		if (index == null) return
+		const target = player.world.players[index]
 		for (let partyName in Party) {
-			if (Party[partyName] != target.party) continue;
-			await player.sendMessage(`Phe của ${target.name} là /${partyName}/`);
-			break;
+			if (Party[partyName] != target.party) continue
+			await player.sendMessage(`Phe của ${target.name} là /${partyName}/`)
+			break
 		}
 	}
-};
+}

@@ -1,18 +1,18 @@
-const {Party} = require('../enum');
-const Role = require('./Role');
+import { Party } from "../enum"
+import Role from "./Role"
 
-module.exports = class Villager extends Role {
+export default class Villager extends Role {
 	constructor(options) {
 		super({
 			...options,
 			...{}
-		});
+		})
 	}
 
 	isWin() {
-		const werewolfCount = this.world.items.filter(
+		const werewolfCount = this.world.players.filter(
 			player => !player.died && player.party == Party.WEREWOLF
-		).length;
-		return werewolfCount <= 0;
+		).length
+		return werewolfCount <= 0
 	}
-};
+}

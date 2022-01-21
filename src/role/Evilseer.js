@@ -1,28 +1,27 @@
-const Ability = require('../ability');
-const Gang = require('../gang');
-const Werewolf = require('./Werewolf');
+import {RoleReveal} from "../ability"
+import Werewolf from "./Werewolf"
 
-module.exports = class Evilseer extends Werewolf {
+export default class Evilseer extends Werewolf {
 	constructor(options) {
 		super({
 			...options,
 			...{}
-		});
+		})
 	}
 
 	async onNight() {
-		return this.isAlone() ? [] : [await this.request(Ability.RoleReveal)];
+		return this.isAlone() ? [] : [await this.request(RoleReveal)]
 	}
 
 	async voteBite() {
-		return this.isAlone() ? await super.voteBite() : [];
+		return this.isAlone() ? await super.voteBite() : []
 	}
 
 	isAlone() {
-		const werewolfs = this.world.items.filter(
+		const werewolfs = this.world.players.filter(
 			player => player.role == Werewolf
-		);
-		const alives = werewolfs.filter(werewolf => !werewolf.died);
-		return alives.length <= 0;
+		)
+		const alives = werewolfs.filter(werewolf => !werewolf.died)
+		return alives.length <= 0
 	}
-};
+}

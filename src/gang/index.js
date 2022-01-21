@@ -1,4 +1,2 @@
-module.exports = {
-	Werewolf: require('./Werewolf.gang'),
-	Isolate: require('./Isolate.gang')
-};
+export {default as Werewolf} from "./Werewolf.gang"
+export {default as Isolate} from "./Isolate.gang"

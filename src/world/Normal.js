@@ -1,7 +1,7 @@
-const World = require('./World');
+import World from "./World"
 
-module.exports = class Normal extends World {
+export default class Normal extends World {
 	constructor(options) {
-		super(options);
+		super(options)
 	}
-};
+}
